@@ -16,7 +16,7 @@
   * p: convert percentile to a z score
   * sub: subtract the last two calculated z score percentiles will be subtracted to get a range
   * quit: return to the starting point of the program
-  ## ![Example screenshot](https://github.com/cperryoh/Ap-Stats-calculation-tool/blob/master/images/calc.PNG?raw=true)
+##![Example screenshot](https://github.com/cperryoh/Ap-Stats-calculation-tool/blob/master/images/calc.PNG?raw=true)
 * n- Get's statistics about the data set
   * allows for the entry of data to be in one of the two formats
     * 1,2,3,4,4321,1
