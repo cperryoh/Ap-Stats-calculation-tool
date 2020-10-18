@@ -1,6 +1,6 @@
 # Ap-Stats-calculation-tool
 ## A tool that allows users to do calculations concerning statistics.
-![Examples for frequency changes command] (/images/frequency.PNG)
+![Hi] (/images/calc.PNG)
 * Count frequency of objects in a data set [f]
   * Count- counts all the occurrences of each data point (once ran, returns back to the beginning of the program)
   * number- adds a number to the array that will be counted
