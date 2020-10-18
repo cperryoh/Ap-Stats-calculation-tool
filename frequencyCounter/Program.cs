@@ -473,7 +473,7 @@ namespace frequencyCounter
                 }
                 else if (calcType.Equals("f"))
                 {
-                    Console.WriteLine("Input a data point or command");
+                    Console.WriteLine("[number][count - counts all the occurrences of each data point]");
                     String input = Console.ReadLine();
                     //if the input is not a comand start to count it
                     do
