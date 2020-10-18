@@ -1,6 +1,6 @@
 # Ap-Stats-calculation-tool
 ## A tool that allows users to do calculations concerning statistics.
-Format: ![Alt Text] (https://github.com/cperryoh/Ap-Stats-calculation-tool/blob/master/images/calc.PNG?raw=true)
+![Alt Text] (https://github.com/cperryoh/Ap-Stats-calculation-tool/blob/master/images/calc.PNG?raw=true)
 * Count frequency of objects in a data set [f]
   * Count- counts all the occurrences of each data point (once ran, returns back to the beginning of the program)
   * number- adds a number to the array that will be counted
