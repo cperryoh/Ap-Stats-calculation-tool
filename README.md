@@ -1,22 +1,22 @@
 # Ap-Stats-calculation-tool
 ## A tool that allows users to do calculations concerning statistics.
-##![Example screenshot](https://github.com/cperryoh/Ap-Stats-calculation-tool/blob/master/images/frequency.PNG?raw=true)
+## ![Example screenshot](https://github.com/cperryoh/Ap-Stats-calculation-tool/blob/master/images/frequency.PNG?raw=true)
 * Count frequency of objects in a data set [f]
   * Count- counts all the occurrences of each data point (once ran, returns back to the beginning of the program)
   * number- adds a number to the array that will be counted
-##![Example screenshot](https://github.com/cperryoh/Ap-Stats-calculation-tool/blob/master/images/changes.PNG?raw=true)
+## ![Example screenshot](https://github.com/cperryoh/Ap-Stats-calculation-tool/blob/master/images/changes.PNG?raw=true)
 * Count changes in a data set. Log the smallest and largest changes between data points[c]
   * {number}: add to the data set of numbers
   * calc: calculate the changes in the data(once ran, returns back to the beginning of the program)
   * remove: remove the last item added
-##![Example screenshot](https://github.com/cperryoh/Ap-Stats-calculation-tool/blob/master/images/zscore.PNG?raw=true)
+## ![Example screenshot](https://github.com/cperryoh/Ap-Stats-calculation-tool/blob/master/images/zscore.PNG?raw=true)
 * z-Do calculations concerning z scores
   * z score: convert z score to percentile(z score is converted to percentile to be used on the [sub] function)
   * calc: convert raw data points to a z score(z score is converted to percentile to be used on the [sub] function)
   * p: convert percentile to a z score
   * sub: subtract the last two calculated z score percentiles will be subtracted to get a range
   * quit: return to the starting point of the program
-##![Example screenshot](https://github.com/cperryoh/Ap-Stats-calculation-tool/blob/master/images/calc.PNG?raw=true)
+## ![Example screenshot](https://github.com/cperryoh/Ap-Stats-calculation-tool/blob/master/images/calc.PNG?raw=true)
 * n- Get's statistics about the data set
   * allows for the entry of data to be in one of the two formats
     * 1,2,3,4,4321,1
