@@ -448,7 +448,7 @@ namespace frequencyCounter
                                 double z = result.CumulativeDistribution(i);
 
                                 //if z is closer to our requested percentile than our previous one, use z
-                                if (Math.Abs(z - percentile) < Math.Abs(result.CumulativeDistribution(closest) - percentile))
+                                if (Math.Abs(z - percentile) < Math.Abs(result.CumulativeDistribution(closest) - percentile)&&z>percentile)
                                 {
 
                                     //set closest zscore to i
