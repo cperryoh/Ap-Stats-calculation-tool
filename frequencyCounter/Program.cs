@@ -399,7 +399,7 @@ namespace frequencyCounter
                     String input = Console.ReadLine();
 
                     //zscore=last score->percentile calculated zscore_= last last score->percentile calculated
-                    double zscore =0, zscore_=0;
+                    double percent =0, percent_=0;
 
                     //set up class to calculate zscore
                     
@@ -414,22 +414,42 @@ namespace frequencyCounter
                         {
 
                             //move calculated zscores over
-                            zscore_ = zscore;
-                            zscore = getZScorePercent(double.Parse(input));
+                            percent_ = percent;
+                            percent = getZScorePercent(double.Parse(input));
 
                             //print result
-                            Console.WriteLine("The percentile for a z-score of {0} is {1}", double.Parse(input), zscore);
-
+                            Console.WriteLine("The percentile for a z-score of {0} is {1}", double.Parse(input), percent);
+                            Console.WriteLine(
+@"Explination:
+Uses zscore table to convert zscore to a percentile(http://www.z-table.com/). 
+The tool in the url uses two seprate tables to calculate a score, one for 
+positive zscores on for negitve ones.");
                         }
                         else if (input.ToLower().Equals("calc"))
                         {
+
+                            //get mean from user
                             double mean = getNumber("Enter the mean: ");
+
+                            //get standerd deviation from user
                             double sd = getNumber("Enter the standerd deviation: ");
+
+                            //get raw value from user
                             double dataPoint = getNumber("Enter the point that you would like the z-score of: ");
+
+                            //calculate z score rounded to nearest 100th
                             double z = Math.Round((dataPoint - mean) / sd, 2);
+
+                            //print
                             Console.WriteLine($"The z-score for {dataPoint} is {z}.");
-                            zscore_ = zscore;
-                            zscore = getZScorePercent(z);
+                            Console.WriteLine(
+@"Explination:
+Uses the equation, 'zscore=(x-mean)/standerd deviation' to get zscore");
+
+
+                            //log zscore to be used in sub function
+                            percent_ = percent;
+                            percent = getZScorePercent(z);
 
                         }
 
@@ -438,19 +458,25 @@ namespace frequencyCounter
                         {
 
                             //decide which way to subtract
-                            if (zscore > zscore_)
+                            if (percent > percent_)
                             {
-                                Console.WriteLine("The differnece of the two previously calculated z-scores is {0}-{1}={2}", Math.Round(zscore, 4), Math.Round(zscore_, 4), Math.Round(zscore - zscore_, 4));
+                                Console.WriteLine("The differnece of the two previously calculated z-scores is {0}-{1}={2}", Math.Round(percent, 4), Math.Round(percent_, 4), Math.Round(percent - percent_, 4));
                             }
                             else
                             {
-                                Console.WriteLine("The differnece of the two previously calculated z-scores is {0}-{1}={2}", Math.Round(zscore_, 4), Math.Round(zscore, 4), Math.Round(zscore_ - zscore, 4));
+                                Console.WriteLine("The differnece of the two previously calculated z-scores is {0}-{1}={2}", Math.Round(percent_, 4), Math.Round(percent, 4), Math.Round(percent_ - percent, 4));
                             }
+                            Console.WriteLine(
+@"Explination:
+Uses the last to calculated z scores and subtracts the larger one from the smaller one.");
                         }
+
+                        //converts percentile to a raw value based off mean, and standerd deviation
                         else if (input.ToLower().Equals("prv"))
                         {
                             //get percentile from user
-                            double percent = getNumber("Enter percentile: ");
+                            double p
+                                = getNumber("Enter percentile: ");
 
                             //get mean from user
                             double mean = getNumber("Enter mean: ");
@@ -459,7 +485,7 @@ namespace frequencyCounter
                             double deviation = getNumber("Enter standerd deviation: ");
 
                             //convert percentile to a z score
-                            double z = Math.Round(percentToZ(percent/100),2);
+                            double z = Math.Round(percentToZ(p/100),2);
 
                             //convert z to raw value by solving for x in the following equation
                             //zscore=(x-μ(mean))/σ(standerd deviation)
@@ -467,6 +493,11 @@ namespace frequencyCounter
 
                             //print result
                             Console.WriteLine($"The raw value of a zscore {z} is {raw}");
+                            Console.WriteLine(
+@"Explination: 
+1) Find closest z percent represented by z score on table
+2) solve for x in zscore=(x-mean)/standerd deviation
+");
                         }
                         //convert percentile to zscore(withen 1 100th)
                         else if (input.ToLower().Equals("p"))
@@ -480,6 +511,10 @@ namespace frequencyCounter
 
                             //print results
                             Console.WriteLine("The closest z score to {0}% is {1}", percentile*100, Math.Round(z,2));
+                            Console.WriteLine(
+@"Explination:
+Uses zscore table(http://www.z-table.com/). Loops through entier table and finds the zscore that is closest to the requested percentile while still including it.
+Ex: If you need a zscore for 70% choose 0.7019 instead of .6950. Even though 0.6950 is closer to 70% it does not capture it.");
                         }
 
                         //tell user that the given input was invalid
