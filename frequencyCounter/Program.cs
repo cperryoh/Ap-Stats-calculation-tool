@@ -449,11 +449,23 @@ namespace frequencyCounter
                         }
                         else if (input.ToLower().Equals("prv"))
                         {
+                            //get percentile from user
                             double percent = getNumber("Enter percentile: ");
+
+                            //get mean from user
                             double mean = getNumber("Enter mean: ");
+
+                            //get standerd deviation from user
                             double deviation = getNumber("Enter standerd deviation: ");
-                            double z = percentToZ(percent/100);
+
+                            //convert percentile to a z score
+                            double z = Math.Round(percentToZ(percent/100),2);
+
+                            //convert z to raw value by solving for x in the following equation
+                            //zscore=(x-μ(mean))/σ(standerd deviation)
                             double raw = Math.Round((z * deviation) + mean,2);
+
+                            //print result
                             Console.WriteLine($"The raw value of a zscore {z} is {raw}");
                         }
                         //convert percentile to zscore(withen 1 100th)
