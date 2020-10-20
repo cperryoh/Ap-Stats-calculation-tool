@@ -48,7 +48,25 @@ namespace frequencyCounter
             //if an object with the name we are looking for is not found return null
             return null;
         }
+        static double percentToZ(double percent)
+        {
+            double closest = double.MaxValue;
+            for (double i = -6; i <= 6f; i += 0.01)
+            {
 
+                //convert i zscore to percentile
+                double z = result.CumulativeDistribution(i);
+
+                //if z is closer to our requested percentile than our previous one, use z
+                if (Math.Abs(z - percent) < Math.Abs(result.CumulativeDistribution(closest) - percent) && z > percent)
+                {
+
+                    //set closest zscore to i
+                    closest = i;
+                }
+            }
+            return closest;
+        }
         //parse list of strings in csv format
         static List<string> pareseStringCsv(string csv)
         {
@@ -377,7 +395,7 @@ namespace frequencyCounter
                 else if (calcType.Equals("z"))
                 {
                     //get input
-                    Console.Write("\n[z-score][calc- get a zscore][p- convert a z-score to a percentile][quit][sub]: ");
+                    Console.Write("\n[z-score][calc- get a zscore][prv- convert percentile to a raw value][p- convert a z-score to a percentile][quit][sub]: ");
                     String input = Console.ReadLine();
 
                     //zscore=last score->percentile calculated zscore_= last last score->percentile calculated
@@ -429,35 +447,27 @@ namespace frequencyCounter
                                 Console.WriteLine("The differnece of the two previously calculated z-scores is {0}-{1}={2}", Math.Round(zscore_, 4), Math.Round(zscore, 4), Math.Round(zscore_ - zscore, 4));
                             }
                         }
-
+                        else if (input.ToLower().Equals("prv"))
+                        {
+                            double percent = getNumber("Enter percentile: ");
+                            double mean = getNumber("Enter mean: ");
+                            double deviation = getNumber("Enter standerd deviation: ");
+                            double z = percentToZ(percent/100);
+                            double raw = Math.Round((z * deviation) + mean,2);
+                            Console.WriteLine($"The raw value of a zscore {z} is {raw}");
+                        }
                         //convert percentile to zscore(withen 1 100th)
                         else if (input.ToLower().Equals("p"))
                         {
-
-                            //set up clostest varible
-                            double closest=double.MaxValue;
 
                             //get percentile from user
                             double percentile =getNumber("Enter a percentile: ")/100;
 
                             //loop through zscores -6 to 6 incrementing by 0.01
-                            for (double i = -6; i <= 6f; i += 0.01)
-                            {
-
-                                //convert i zscore to percentile
-                                double z = result.CumulativeDistribution(i);
-
-                                //if z is closer to our requested percentile than our previous one, use z
-                                if (Math.Abs(z - percentile) < Math.Abs(result.CumulativeDistribution(closest) - percentile)&&z>percentile)
-                                {
-
-                                    //set closest zscore to i
-                                    closest = i;
-                                }
-                            }
+                            double z = percentToZ(percentile);
 
                             //print results
-                            Console.WriteLine("The closest z score to {0}% is {1}", percentile*100, Math.Round(closest,2));
+                            Console.WriteLine("The closest z score to {0}% is {1}", percentile*100, Math.Round(z,2));
                         }
 
                         //tell user that the given input was invalid
@@ -467,7 +477,7 @@ namespace frequencyCounter
                         }
 
                         //get new input
-                        Console.Write("\n[z-score][calc- get a zscore][p- convert a z-score to a percentile][quit][sub]: ");
+                        Console.Write("\n[z-score][calc- get a zscore][prv- convert percentile to a raw value[p- convert a z-score to a percentile][quit][sub]: ");
                         input = Console.ReadLine();
                     }
                 }
