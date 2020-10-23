@@ -105,12 +105,12 @@ namespace frequencyCounter
         }
 
         //parseIntCsv
-        static List<float> parseIntCsv(string csv)
+        static List<float> parseNumCsv(string csv)
         {
             //remove any spaces
             csv = csv.Replace("  ", " ");
-            csv = csv.Replace(", ",",");
-            csv=csv.Replace(" ,",",");
+            csv = csv.Replace(", ", ",");
+            csv = csv.Replace(" ,", ",");
 
             //list of strings data will be parsed into
             List<float> nums = new List<float>();
@@ -151,9 +151,135 @@ namespace frequencyCounter
             //return list
             return nums;
         }
+        static List<float> getDataSet()
+        {
+            //list of inputs 
+            List<float> nums = new List<float>();
+
+            //prompt user for intial input
+            Console.Write("Enter a comma seperated data set, one data point or 'done':");
+            string input = Console.ReadLine();
+            do
+            {
+
+                //determain if input is singluar numbe or csv
+                if (input.Contains(","))
+                {
+
+                    //add csv list to list
+                    nums.AddRange(parseNumCsv(input));
+
+
+                }
+                else if (isNumber(input))
+                {
+
+                    //add singular number to list
+                    nums.Add(float.Parse(input));
+                }
+                else if (input.Equals("print"))
+                {
+                    sortList(ref nums);
+                    for (int i = 0; i < nums.Count - 1; i++)
+                    {
+                        Console.Write(nums[i] + ", ");
+                    }
+                    Console.Write(nums[nums.Count - 1] + "\n\n");
+                }
+
+
+                //get new input
+                Console.Write("Enter a comma seperated data set, one data point or 'done': ");
+                input = Console.ReadLine();
+
+            } while (!input.Equals("done"));
+            sortList(ref nums);
+            return nums;
+        }
         static double getZScorePercent(double z)
         {
             return Math.Round(result.CumulativeDistribution(z),4);
+        }
+        static Dictionary<string, float> getStats(List<float> nums)
+        {
+            Dictionary<string, float> stats = new Dictionary<string, float>();
+
+
+            float mean, median, iqr, lq, uq;
+
+
+            //get mean
+            float sum = 0;
+            foreach (int i in nums)
+            {
+                sum += i;
+            }
+
+            //get data on mean
+            mean = sum / (float)nums.Count;
+            float difTotal = 0;
+            float range = nums[nums.Count - 1] - nums[0];
+            float standerdDeviation = 0;
+            foreach (float i in nums)
+            {
+                difTotal += (float)Math.Pow(i - mean, 2);
+            }
+            standerdDeviation = (float)Math.Sqrt(difTotal / ((float)nums.Count - 1));
+
+            //get median
+            median = getMedian(nums);
+
+            //Lower quartile
+            if (nums.Count % 2 == 0)
+            {
+                uq = getMedian(nums.GetRange(nums.Count / 2, nums.Count - (nums.Count / 2)));
+                lq = getMedian(nums.GetRange(0, nums.Count / 2));
+            }
+            else
+            {
+                uq = getMedian(nums.GetRange(nums.Count / 2 + 1, nums.Count - (nums.Count / 2 + 1)));
+                lq = getMedian(nums.GetRange(0, nums.Count / 2));
+            }
+            iqr = uq - lq;
+            float outLierLowerRange = lq - (iqr * 1.5f);
+            int outliers = 0;
+            float outLierUpperRange = uq + (iqr * 1.5f);
+            foreach (int i in nums)
+            {
+                if (i < outLierLowerRange || i > outLierUpperRange)
+                {
+                    outliers++;
+                }
+            }
+
+            //calc ±1s
+            float l1 =mean-standerdDeviation, u1=mean+standerdDeviation;
+
+            //calc ±2 s
+            float l2 =mean-(standerdDeviation*2), u2=mean+(standerdDeviation * 2);
+
+            //calc ±3 s
+            float l3 =mean-(standerdDeviation * 3), u3= mean + (standerdDeviation * 3);
+
+            //add data to dictionary
+            stats.Add("l1", l1);
+            stats.Add("u1", u1);
+            stats.Add("l2", l2);
+            stats.Add("u2", u2);
+            stats.Add("l3", l3);
+            stats.Add("u3", u3);
+            stats.Add("mean", mean);
+            stats.Add("range", range);
+            stats.Add("sd", standerdDeviation);
+            stats.Add("median", median);
+            stats.Add("iqr", iqr);
+            stats.Add("uq", uq);
+            stats.Add("lq", lq);
+            stats.Add("lower range", outLierLowerRange);
+            stats.Add("upper range", outLierUpperRange);
+            stats.Add("outliers", outliers);
+            return stats;
+
         }
         //determains if a string can be converted to a string
         static bool isNumber(string input)
@@ -289,44 +415,7 @@ namespace frequencyCounter
                 else if (calcType.Equals("n"))
                 {
 
-                    //list of inputs 
-                    List<float> nums = new List<float>();
-
-                    //prompt user for intial input
-                    Console.Write("Plese intput your data either in a csv format or one by one:");
-                    string input = Console.ReadLine();
-                    do
-                    {
-
-                        //determain if input is singluar numbe or csv
-                        if (input.Contains(","))
-                        {
-
-                            //add csv list to list
-                            nums.AddRange(parseIntCsv(input));
-
-
-                        }
-                        else if (isNumber(input))
-                        {
-
-                            //add singular number to list
-                            nums.Add(float.Parse(input));
-                        }else if (input.Equals("print")){
-                            sortList(ref nums);
-                            for(int i =0; i < nums.Count - 1; i++)
-                            {
-                                Console.Write(nums[i] + ", ");
-                            }
-                            Console.Write(nums[nums.Count - 1]+"\n\n");
-                        }
-
-
-                        //get new input
-                        Console.Write("Plese intput your data either in a csv format or one by one: ");
-                        input = Console.ReadLine();
-
-                    } while (!input.Equals("calc"));
+                    var nums = getDataSet();
                     string copy = "";
                     sortList(ref nums);
                     for (int i = 0; i < nums.Count - 1; i++)
@@ -338,64 +427,18 @@ namespace frequencyCounter
                     SetClipboardData(13, Marshal.StringToHGlobalUni(copy));
 
                     CloseClipboard();
-                    //start sorting
-                    sortList(ref nums);
-
-                    
-                    float mean, median,iqr,lq,uq;
-
-
-                    //get mean
-                    float sum = 0;
-                    foreach (int i in nums)
-                    {
-                        sum += i;
-                    }
-
-                    //get data on mean
-                    mean = sum / (float)nums.Count;
-                    float difTotal = 0;
-                    float range = nums[nums.Count - 1] - nums[0];
-                    float standerdDeviation = 0;
-                    foreach(float i in nums)
-                    {
-                        difTotal += (float)Math.Pow(i-mean,2);
-                    }
-                    standerdDeviation = (float) Math.Sqrt(difTotal / ((float)nums.Count-1));
-
-                    //get median
-                    median = getMedian(nums);
-
-                    //Lower quartile
-                    if (nums.Count % 2 == 0)
-                    {
-                        uq = getMedian(nums.GetRange(nums.Count / 2, nums.Count - (nums.Count / 2)));
-                        lq = getMedian(nums.GetRange(0, nums.Count / 2));
-                    }
-                    else
-                    {
-                        uq = getMedian(nums.GetRange(nums.Count / 2 + 1, nums.Count - (nums.Count / 2 + 1)));
-                        lq = getMedian(nums.GetRange(0, nums.Count / 2));
-                    }
-                    iqr = uq - lq;
-                    float outLierLowerRange = lq - (iqr * 1.5f);
-                    int outliers = 0;
-                    float outLierUpperRange = uq + (iqr * 1.5f);
-                    foreach(int i in nums)
-                    {
-                        if(i< outLierLowerRange ||i> outLierUpperRange)
-                        {
-                            outliers++;
-                        }
-                    }
+                    var stats = getStats(nums);
                     //print out data
-                    Console.WriteLine(String.Format("Range: {3} Mean: {0} Median: {1} Standerd Deviation: {2}", mean, median,standerdDeviation,range));
-                    Console.WriteLine("Lq: {0} Uq: {1} IQR: {2} Lower outlier range: {3} Upper outlier range {4} Outlier count: {5}", lq, uq,iqr, outLierLowerRange, outLierUpperRange,outliers);
+                    Console.WriteLine(String.Format("Range: {3} Mean: {0} Median: {1} Standerd Deviation: {2}", stats["mean"], stats["median"], stats["sd"], stats["range"]));
+                    Console.WriteLine("Lq: {0} Uq: {1} IQR: {2} Lower outlier range: {3} Upper outlier range {4} Outlier count: {5}", stats["lq"], stats["uq"], stats["iqr"], stats["lower range"], stats["upper range"], stats["outliers"]);
+
+                    //prints the following ranges of the data set ±1 s from the mean, ±2 s from the mean, and ±3 s from the mean
+                    Console.WriteLine($"s±1=({Math.Round(stats["l1"],2)},{Math.Round(stats["u1"], 2)})\ns±2=({Math.Round(stats["l2"], 2)},{Math.Round(stats["u2"], 2)})\ns±1=({Math.Round(stats["l3"], 2)},{Math.Round(stats["u3"], 2)})");
                 }
                 else if (calcType.Equals("z"))
                 {
                     //get input
-                    Console.Write("\n[z-score][calc- get a zscore][prv- convert percentile to a raw value][p- convert a z-score to a percentile][quit][sub]: ");
+                    Console.Write("\n[z-score][calc- get a zscore][normal- enter data set and find out how close it is to the 68-95-99.7 rule][prv- convert percentile to a raw value][p- convert a z-score to a percentile][quit][sub]: ");
                     String input = Console.ReadLine();
 
                     //zscore=last score->percentile calculated zscore_= last last score->percentile calculated
@@ -424,6 +467,62 @@ namespace frequencyCounter
 Uses zscore table to convert zscore to a percentile(http://www.z-table.com/). 
 The tool in the url uses two seprate tables to calculate a score, one for 
 positive zscores on for negitve ones.");
+                        }
+                        else if (input.ToLower().Equals("normal"))
+                        {
+
+                            //get data set from user
+                            var nums = getDataSet();
+
+                            //get all the stats on the data set
+                            var stats = getStats(nums);
+
+                            //pull the mean and standerd deviation
+                            double mean = stats["mean"];
+                            double sd = stats["sd"];
+
+                            //set up varibles to count numbers withen range
+                            double withenOneSd=0, withenTwoSd=0, withenThreeSd=0;
+
+                            //set up array for ranges
+                            double[,] ranges = new double[3,2];
+
+
+                            //intialize ranges
+                            //[0,1]= upper range withen 1 sd
+                            for(int i = 0; i < 3; i++)
+                            {
+                                ranges[i, 0] = mean - (sd*(i+1));
+                                ranges[i, 1] = mean + (sd * (i + 1));
+                            }
+
+                            //loop through list and count numbers withen each range
+                            for(int i = 0; i < nums.Count; i++)
+                            {
+                                double number = nums[i];
+                                if (number < ranges[0,1] && number > ranges[0, 0])
+                                {
+                                    withenOneSd++;
+                                }
+                                if (number < ranges[1, 1] && number > ranges[1, 0])
+                                {
+                                    withenTwoSd++;
+                                }
+                                if (number < ranges[2, 1] && number > ranges[2, 0])
+                                {
+                                    withenThreeSd++;
+                                }
+                            }
+
+                            //convert counts to percentiles
+                            withenOneSd = Math.Round((withenOneSd / nums.Count)*100,1);
+                            withenTwoSd = Math.Round((withenTwoSd / nums.Count)*100,1);
+                            withenThreeSd =Math.Round((withenThreeSd / nums.Count)*100,1);
+
+                            //print
+                            Console.WriteLine($"{withenOneSd}% are of observations withen 1 standerd deviation in either direction.");
+                            Console.WriteLine($"{withenTwoSd}% are of observations withen 2 standerd deviations in either direction.");
+                            Console.WriteLine($"{withenThreeSd}% are of observations withen 3 standerd deviations in either direction.");
                         }
                         else if (input.ToLower().Equals("calc"))
                         {
@@ -524,7 +623,7 @@ Ex: If you need a zscore for 70% choose 0.7019 instead of .6950. Even though 0.6
                         }
 
                         //get new input
-                        Console.Write("\n[z-score][calc- get a zscore][prv- convert percentile to a raw value[p- convert a z-score to a percentile][quit][sub]: ");
+                        Console.Write("\n[z-score][calc- get a zscore][normal- enter data set and find out how close it is to the 68-95-99.7 rule][prv- convert percentile to a raw value[p- convert a z-score to a percentile][quit][sub]: ");
                         input = Console.ReadLine();
                     }
                 }
