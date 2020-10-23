@@ -15,6 +15,7 @@
   * calc: convert raw data points to a z score(z score is converted to percentile to be used on the [sub] function)
   * p: convert percentile to a z score
   * sub: subtract the last two calculated z score percentiles will be subtracted to get a range
+  * prv: Converts percentile->zscore->raw value
   * quit: return to the starting point of the program
 ## ![Example screenshot](https://github.com/cperryoh/Ap-Stats-calculation-tool/blob/master/images/calc.PNG?raw=true)
 * n- Get's statistics about the data set
