@@ -217,7 +217,11 @@ namespace frequencyCounter
 
             //get data on mean
             mean = sum / (float)nums.Count;
+
+            //sum of all observations from the mean
             float difTotal = 0;
+
+            //gets range
             float range = nums[nums.Count - 1] - nums[0];
             float standerdDeviation = 0;
             foreach (float i in nums)
@@ -781,29 +785,59 @@ Ex: If you need a zscore for 70% choose 0.7019 instead of .6950. Even though 0.6
                 keepSorting = anySwap;
             }
         }
+        //Gets valid number input from user
         private static double getNumber(string prompt)
         {
+
+            //prints prompt
             Console.Write(prompt);
+
+            //gets intial input from user
             string input = Console.ReadLine();
+
+            //loops till is number evaluates to true 
             while (!isNumber(input))
             {
+
+                //if user did not give a number, prits out prompt again
+                Console.WriteLine("Sorry, that is not a valid input.");
                 Console.Write(prompt);
+
+                //get new input to test
                 input = Console.ReadLine();
             }
+
+            //can now convert input to double
             return double.Parse(input);
         }
+
+        //gets meadian from a list of numbers
         private static float getMedian(List<float> nums)
         {
+
+            //if there are an even amount of observations
             if (nums.Count % 2 == 0)
             {
+
+                //gets index of the two middle numbers
                 float lft = nums[(nums.Count / 2) - 1];
                 float right = nums[(nums.Count / 2)];
+
+                //return the average between the two.
                 return (lft + right) / 2f;
             }
+
+            //if there is an uneven amount
             else
             {
+
+                //get the middle number
                 int middleIndex = (int)(((float)nums.Count / 2f) + 0.5f);
+
+                //have index start from 0
                 middleIndex--;
+
+                //return median
                 return nums[middleIndex];
             }
         }
