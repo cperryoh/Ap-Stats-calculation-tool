@@ -14,6 +14,7 @@
   * z score: convert z score to percentile(z score is converted to percentile to be used on the [sub] function)
   * calc: convert raw data points to a z score(z score is converted to percentile to be used on the [sub] function)
   * p: convert percentile to a z score
+  * normal: enter data set and find out how close it is to the 68-95-99.7 rule
   * sub: subtract the last two calculated z score percentiles will be subtracted to get a range
   * prv: Converts percentile->zscore->raw value
   * quit: return to the starting point of the program
@@ -41,4 +42,6 @@
     * upper outlier range- calculated by the following equation
       * UQ - (IQR * 1.5f)
       * any numbers above the upper outlier range are considered outliers
-    * Outlier count- The count of numbers either bellow the lower outlier range or above the upper outlier range 
+    * Outlier count- The count of numbers either bellow the lower outlier range or above the upper outlier range
+  * lr- get stats and line for scatter plot:
+    * prints out equation for linear regression line, r, and r^2 for a scatter plot
