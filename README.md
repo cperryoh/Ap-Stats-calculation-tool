@@ -43,5 +43,5 @@
       * UQ - (IQR * 1.5f)
       * any numbers above the upper outlier range are considered outliers
     * Outlier count- The count of numbers either bellow the lower outlier range or above the upper outlier range
-  * lr- get stats and line for scatter plot:
-    * prints out equation for linear regression line, r, and r^2 for a scatter plot
+* lr- get stats and line for scatter plot:
+  * prints out equation for linear regression line, r, and r^2 for a scatter plot
