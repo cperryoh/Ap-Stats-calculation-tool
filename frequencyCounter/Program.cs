@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace frequencyCounter
 {
@@ -312,7 +314,7 @@ namespace frequencyCounter
             while (true)
             {
                 //get mode
-                Console.Write("Input a comand or a new element[c-changes in data][lr- get stats and line for scatter plot][z- convert a z-score to a probality] [f-frequency of a certain type of data][n-get mean, median, and mode from numeric data]: ");
+                Console.Write("Input a comand or a new element[c-changes in data][lr- get stats and line for scatter plot][z- convert a z-score to a probality] [f-frequency of a certain type of data][n-get mean, median, and mode from numeric data][p-probabilty calculatiopns]: ");
                 string calcType = Console.ReadLine().ToLower();
 
                 //calc mode
@@ -698,6 +700,40 @@ Ex: If you need a zscore for 70% choose 0.7019 instead of .6950. Even though 0.6
                         input = Console.ReadLine().ToLower();
                     } while (!input.Equals("quit"));
                 }
+                else if (calcType.Equals("p"))
+                {
+                    Console.Write("[quit][d-get mean/sd]: ");
+                    String input = Console.ReadLine().ToLower();
+                    while (!input.Equals("quit"))
+                    {
+                        if (input.Equals("d"))
+                        {
+                            Console.WriteLine("Enter all the possible outcomes");
+                            var outComes = getDataSet();
+                            Console.WriteLine("Enter all the probabilities for the possible outcomes");
+                            var probs = getDataSet();
+                            while (probs.Count != outComes.Count)
+                            {
+                                Console.WriteLine("Please re enter the data sets, they were not of equal lengths");
+                                Console.WriteLine("Enter all the possible outcomes");
+                                outComes = getDataSet();
+                                Console.WriteLine("Enter all the probabilities for the possible outcomes");
+                                probs = getDataSet();
+                            }
+                            double mean = 0;
+                            for (int i = 0; i < outComes.Count(); i++)
+                            {
+                                mean += outComes[i] * probs[i];
+                            }
+                            double sd = 0;
+                            for(int i = 0; i < outComes.Count(); i++)
+                            {
+                                sd += Math.Abs(outComes[i] - mean) * probs[i];
+                            }
+                            Console.WriteLine($"Sd: {Math.Round(sd, 3)} Variance: {Math.Round(Math.Pow(sd, 2), 3)} Mean: {Math.Round(mean, 3)}");
+                        }
+                    }
+                }
                 else if (calcType.Equals("f"))
                 {
                     Console.WriteLine("[number][count - counts all the occurrences of each data point]");
@@ -817,7 +853,83 @@ Ex: If you need a zscore for 70% choose 0.7019 instead of .6950. Even though 0.6
                 }
             }
         }
-        
+
+        //Code was gotten from https://www.codeproject.com/Articles/165320/Easy-Way-of-Converting-a-Decimal-to-a-Fraction
+        //reused code starting here
+        private static int occurence(string s, string check)
+        {
+            int i = 0;
+            int d = s.Length;
+            string ds = check;
+            for (int n = (ds.Length / d); n > 0; n--)
+            {
+                if (ds.Contains(s))
+                {
+                    i++;
+                    ds = ds.Remove(ds.IndexOf(s), d);
+                }
+            }
+            return i;
+        }
+        static string Recur(string db)
+        {
+            if (db.Length < 13) return "0";
+            var sb = new StringBuilder();
+            for (int i = 0; i < 7; i++)
+            {
+                sb.Append(db[i]);
+                int dlength = (db.Length / sb.ToString().Length);
+                int occur = occurence(sb.ToString(), db);
+                if (dlength == occur || dlength == occur - sb.ToString().Length)
+                {
+                    return sb.ToString();
+                }
+            }
+            return "0";
+        }
+        private static void reduceNo(int i, ref double rD, ref double rN)
+        {
+            //keep reducing until divisibility ends
+            while ((rD % i) == 0 && (rN % i) == 0)
+            {
+                rN = rN / i;
+                rD = rD / i;
+            }
+        }
+        static string Dec2Frac(double dbl)
+        {
+            char neg = ' ';
+            double dblDecimal = dbl;
+            if (dblDecimal < 0)
+            {
+                dblDecimal = Math.Abs(dblDecimal);
+                neg = '-';
+            }
+            var whole = (int)Math.Truncate(dblDecimal);
+            if (whole == dbl)
+            {
+                return String.Format("{0} because supplied value is not a fraction", dbl); //return no if it's not a decimal
+            }
+            string decpart = dblDecimal.ToString(CultureInfo.InvariantCulture).Replace(Math.Truncate(dblDecimal) + ".", "");
+            double rN = Convert.ToDouble(decpart);
+            double rD = Math.Pow(10, decpart.Length);
+
+            string rd = Recur(decpart);
+            int rel = Convert.ToInt32(rd);
+            if (rel != 0)
+            {
+                rN = rel;
+                rD = (int)Math.Pow(10, rd.Length) - 1;
+            }
+            //just a few prime factors for testing purposes
+            var primes = new[] { 47, 43, 37, 31, 29, 23, 19, 17, 13, 11, 7, 5, 3, 2 };
+            foreach (int i in primes) reduceNo(i, ref rD, ref rN);
+
+            rN = rN + (whole * rD);
+            return string.Format("{0}{1}/{2}", neg, rN, rD);
+        }
+
+        //ending here
         private static void sortList(ref List<double> nums)
         {
             bool keepSorting = true;
