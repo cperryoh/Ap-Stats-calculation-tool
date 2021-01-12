@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace frequencyCounter
 {
@@ -284,6 +286,13 @@ namespace frequencyCounter
             return stats;
 
         }
+        public static double factorial(double number)
+        {
+            if (number == 1)
+                return 1;
+            else
+                return number * factorial(number - 1);
+        }
         //determains if a string can be converted to a string
         static bool isNumber(string input)
         {
@@ -304,6 +313,15 @@ namespace frequencyCounter
             {
                 return false;
             }
+        }
+        static double binomialDis()
+        {
+            double numOfPossibleSuccesses = getNumber("Enter the number of possible sucecsses: ");
+            double neededSucessses = getNumber("Enter number of desired successes: ");
+            double prob = getNumber("Enter the possiblity of a success: ");
+            double numOfCombos = (factorial(numOfPossibleSuccesses)) / (factorial(neededSucessses) * factorial(numOfPossibleSuccesses - neededSucessses));
+            double finalProb = numOfCombos * (Math.Pow(1 - prob, numOfPossibleSuccesses - neededSucessses) * Math.Pow(prob, neededSucessses));
+            return finalProb;
         }
         static void Main(string[] args)
         {
@@ -420,11 +438,7 @@ namespace frequencyCounter
                     {
                         if (input.Equals("c"))
                         {
-                            double numOfPossibleSuccesses = getNumber("Enter the number of possible sucecsses: ");
-                            double neededSucessses = getNumber("Enter number of desired successes: ");
-                            double prob = getNumber("Enter the possiblity of a success: ");
-                            double finalProb = numOfPossibleSuccesses * (Math.Pow(1 - prob, numOfPossibleSuccesses - neededSucessses) * Math.Pow(prob, neededSucessses));
-                            Console.WriteLine($"P={Math.Round(finalProb,4)}");
+                            Console.WriteLine("P=" + binomialDis());
                         }
                         else
                         {
