@@ -312,7 +312,7 @@ namespace frequencyCounter
             while (true)
             {
                 //get mode
-                Console.Write("Input a comand or a new element[c-changes in data][lr- get stats and line for scatter plot][z- convert a z-score to a probality] [f-frequency of a certain type of data][n-get mean, median, and mode from numeric data]: ");
+                Console.Write("Input a comand or a new element[b- calculate the probs of a binomial dis][c-changes in data][lr- get stats and line for scatter plot][z- convert a z-score to a probality] [f-frequency of a certain type of data][n-get mean, median, and mode from numeric data]: ");
                 string calcType = Console.ReadLine().ToLower();
 
                 //calc mode
@@ -413,7 +413,27 @@ namespace frequencyCounter
                     //keep looping till user asks to calculate data
                     while (!input.Equals("calc"));
                 }
-
+                else if (calcType.Equals("b")){
+                    Console.Write("q- quit back to main menue c- caclulate a binomial dis: ");
+                    String input = Console.ReadLine().ToLower();
+                    while (!input.Equals("q"))
+                    {
+                        if (input.Equals("c"))
+                        {
+                            double numOfPossibleSuccesses = getNumber("Enter the number of possible sucecsses: ");
+                            double neededSucessses = getNumber("Enter number of desired successes: ");
+                            double prob = getNumber("Enter the possiblity of a success: ");
+                            double finalProb = numOfPossibleSuccesses * (Math.Pow(1 - prob, numOfPossibleSuccesses - neededSucessses) * Math.Pow(prob, neededSucessses));
+                            Console.WriteLine($"P={Math.Round(finalProb,4)}");
+                        }
+                        else
+                        {
+                            Console.WriteLine("That is not a valid input, please try again.");
+                        }
+                        Console.Write("q- quit back to main menue c- caclulate a binomial dis: ");
+                        input = Console.ReadLine().ToLower();
+                    }
+                }
                 //option to get data on numeric set
                 else if (calcType.Equals("n"))
                 {
