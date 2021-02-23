@@ -288,10 +288,13 @@ namespace frequencyCounter
         }
         public static double factorial(double number)
         {
-            if (number == 1)
-                return 1;
-            else
-                return number * factorial(number - 1);
+            double result = 1;
+            while (number != 1)
+            {
+                result = result * number;
+                number = number - 1;
+            }
+            return result;
         }
         //determains if a string can be converted to a string
         static bool isNumber(string input)
@@ -314,13 +317,13 @@ namespace frequencyCounter
                 return false;
             }
         }
-        static double binomialDis()
+        static double binomialDis(double x, double trials, double prob)
         {
-            double numOfPossibleSuccesses = getNumber("Enter the number of possible sucecsses: ");
-            double neededSucessses = getNumber("Enter number of desired successes: ");
-            double prob = getNumber("Enter the possiblity of a success: ");
-            double numOfCombos = (factorial(numOfPossibleSuccesses)) / (factorial(neededSucessses) * factorial(numOfPossibleSuccesses - neededSucessses));
-            double finalProb = numOfCombos * (Math.Pow(1 - prob, numOfPossibleSuccesses - neededSucessses) * Math.Pow(prob, neededSucessses));
+            
+            double numOfCombos = (factorial(trials)) / (factorial(x) * factorial(trials - x));
+            double finalProb = numOfCombos * (Math.Pow(1 - prob, trials - x) * Math.Pow(prob, x));
+            
+            
             return finalProb;
         }
         static void Main(string[] args)
@@ -438,8 +441,32 @@ namespace frequencyCounter
                     {
                         if (input.Equals("c"))
                         {
-                            Console.WriteLine("P=" + binomialDis());
+                            Console.Write("Enter the type of binomial calc you would like to do [pdf][cdf]: ");
+                            input = Console.ReadLine().ToLower();
+                            if (input.Equals("pdf"))
+                            {
+                                double x = getNumber("Enter x: ");
+                                double trials = getNumber("Enter trial count: ");
+                                double prob = getNumber("Enter the probablilty of a success: ");
+
+                                Console.WriteLine("P=" + binomialDis(x, trials, prob));
+                            }else if (input.Equals("cdf"))
+                            {
+                                double bot = getNumber("Enter the lower range of x: ");
+                                double top = getNumber("Enter the upper range of x: ");
+                                double trials = getNumber("Enter the number of trials: ");
+                                double prob = getNumber("Enter the probablilty of a success: ");
+                                double finalProb = 0;
+                                for(int x = (int)bot; x <= top; x++)
+                                {
+                                    double test = binomialDis(x, trials, prob);
+                                    finalProb += Math.Round(binomialDis(x, trials, prob),4);
+                                }
+                                Console.WriteLine($"p({bot}<=x<={top})={finalProb}");
+                            }
+                            
                         }
+
                         else
                         {
                             Console.WriteLine("That is not a valid input, please try again.");
