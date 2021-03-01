@@ -462,7 +462,7 @@ namespace frequencyCounter
                                     double test = binomialDis(x, trials, prob);
                                     finalProb += Math.Round(binomialDis(x, trials, prob),4);
                                 }
-                                Console.WriteLine($"p({bot}<=x<={top})={finalProb}");
+                                Console.WriteLine($"p({bot}<=x<={top})={Math.Round(finalProb,4)}");
                             }
                             
                         }
